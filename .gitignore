@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code
+.vscode/
+
+# IDE
+.idea/
+
+# Environment
+.env
+
+# Secret config file
+config.py
