@@ -1,70 +1,72 @@
-# My AI Assistant (我的AI助手)
+[Read in Chinese / 阅读中文版](README.zh-CN.md)
 
-一个可定制、带语音功能的个性化 AI 助手项目。由 Python 驱动，可以连接到你自己的 AI 服务。
+# Project-EchoSoul
 
-## ✨ 核心功能
+A customizable, voice-enabled AI assistant with a unique persona. Powered by Python and ready to connect to your own AI services.
 
-- **智能对话**: 基于大型语言模型 (如 Gemini) 提供强大的对话能力。
-- **语音输出 (TTS)**: 集成 OpenAI 的文本转语音服务，让 AI 能“说话”。
-- **长期记忆**: AI 能够记住之前的对话内容，实现连贯的上下文交流。
-- **可定制人设**: 你可以在 `config.py` 文件中为你的 AI 设定独特的名字、性格和说话风格。
-- **可配置 API**: 轻松配置使用你自己的 API 中转服务。
+## ✨ Core Features
 
-## 🛠️ 技术栈
+- **Intelligent Conversation**: Leverages Large Language Models (like Gemini) for powerful conversational abilities.
+- **Voice Output (TTS)**: Integrates with OpenAI's Text-to-Speech service to give the AI a voice.
+- **Long-term Memory**: The AI remembers previous conversations for coherent, context-aware interactions.
+- **Customizable Persona**: Define a unique name, personality, and speaking style for your AI in the `config.py` file.
+- **Configurable API**: Easily configure the assistant to use your own API endpoint.
 
-- **后端**: Python 3
-- **语言模型**: Google Gemini Pro (通过 API 调用)
-- **语音合成**: OpenAI TTS (通过 API 调用)
-- **依赖库**: `requests`, `pygame`
+## 🛠️ Tech Stack
 
-## 🚀 安装与运行
+- **Backend**: Python 3
+- **LLM**: Google Gemini Pro (via API)
+- **TTS**: OpenAI TTS (via API)
+- **Libraries**: `requests`, `pygame`
 
-**1. 克隆仓库**
+## 🚀 Installation and Setup
+
+**1. Clone the repository**
 ```bash
 git clone <your-repository-url>
-cd my_ai_assistant
+cd Project-EchoSoul
 ```
 
-**2. 安装依赖**
+**2. Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-**3. 配置项目**
+**3. Configure the project**
 
-这是最重要的一步！将模板文件 `config.example.py` 复制一份，并重命名为 `config.py`。
+This is the most important step! Copy the template file `config.example.py` and rename it to `config.py`.
 
 ```bash
 cp config.example.py config.py
 ```
 
-然后，打开你新创建的 `config.py` 文件进行修改。
+Then, open the newly created `config.py` file and fill in your details.
 
-> **⚠️ 重要安全提示:**
-> 我们已经将 `config.py` 加入了 `.gitignore`。请**不要**强制将它上传到 GitHub，以保护你的 API 密钥安全。
+> **⚠️ Important Security Notice:**
+> The `config.py` file is already listed in `.gitignore`. **Do not** force push it to GitHub, to keep your API keys safe.
 
-你需要修改 `config.py` 中的以下变量：
+You need to modify the following variables in `config.py`:
 
-- `API_BASE_URL`: 你的 API 中转服务地址 (例如: `"https://api.agluo.com/v1"`)。
-- `API_KEY`: 你的 API 密钥。
-- `LLM_MODEL`: 你想使用的语言模型 (例如: `"gemini-2.5-pro"`)。
-- `TTS_MODEL`: 你想使用的语音模型 (例如: `"tts-1"`)。
-- `AI_PERSONA`: 在这里定义你的 AI 的详细人设。
+- `API_BASE_URL`: Your API endpoint (e.g., `"https://your.proxy.url/v1"`).
+- `API_KEY`: Your API key.
+- `LLM_MODEL`: The language model you want to use (e.g., `"gemini-2.5-pro"`).
+- `TTS_MODEL`: The text-to-speech model you want to use (e.g., `"tts-1"`).
+- `AI_PERSONA`: Define the detailed persona of your AI here.
 
-**4. 运行助手**
+**4. Run the assistant**
 ```bash
 python main.py
 ```
 
-## 💬 使用示例
+## 💬 Usage Example
 
 ```
-AI 助手已启动。输入 '退出' 来结束程序。
-你: 你好
-AI: 正在思考...
-AI: 叫本喵有什么事吗，铲屎官喵~
-AI: 正在生成语音...
+AI Assistant is running. Type 'exit' to close.
+You: Hello
+AI: Thinking...
+AI: What do you want, my dear master? Meow~
+AI: Generating voice...
 ```
 
 ---
-*这个项目是在 Roo 的帮助下创建的。*
+*This project was created with the help of Roo.*
