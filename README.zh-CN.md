@@ -15,7 +15,7 @@
 
 使用本项目的最简单方式，是直接下载我们为您打包好的 Windows 最新版本。
 
-**[➡️ 前往 Releases 页面下载最新版本！](https://github.com/your-username/your-repository-name/releases/latest)**
+**[➡️ 前往 Releases 页面下载最新版本！](https://github.com/agluo/Project-EchoSoul/releases/latest)**
 
 您只需下载 `.exe` 文件，将它放在任意文件夹中，然后双击运行即可。本程序是绿色、免安装的。
 
@@ -53,7 +53,7 @@
 ### 2. 环境设置
 **a. 克隆仓库**
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/agluo/Project-EchoSoul.git
 cd Project-EchoSoul
 ```
 

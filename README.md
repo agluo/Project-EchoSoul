@@ -17,7 +17,7 @@ A customizable, voice-enabled AI assistant with a unique persona. Powered by Pyt
 
 The easiest way to use Project-EchoSoul is to download the latest pre-packaged version for Windows.
 
-**[➡️ Download the latest release from the Releases page!](https://github.com/your-username/your-repository-name/releases/latest)**
+**[➡️ Download the latest release from the Releases page!](https://github.com/agluo/Project-EchoSoul/releases/latest)**
 
 Simply download the `.exe` file, place it in a folder of your choice, and double-click to run. The application is portable and self-contained.
 
@@ -55,7 +55,7 @@ If you want to modify the code or build the project yourself, follow these steps
 ### 2. Setup
 **a. Clone the repository**
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/agluo/Project-EchoSoul.git
 cd Project-EchoSoul
 ```
 
