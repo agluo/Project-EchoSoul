@@ -4,67 +4,76 @@
 
 ## ✨ 核心功能
 
+- **现代图形界面 (GUI)**: 一个基于 CustomTkinter 构建的、时尚的聊天气泡风格图形界面。
 - **智能对话**: 基于大型语言模型 (如 Gemini) 提供强大的对话能力。
 - **语音输出 (TTS)**: 集成 OpenAI 的文本转语音服务，让 AI 能“说话”。
-- **长期记忆**: AI 能够记住之前的对话内容，实现连贯的上下文交流。
-- **可定制人设**: 你可以在 `config.py` 文件中为你的 AI 设定独特的名字、性格和说话风格。
-- **可配置 API**: 轻松配置使用你自己的 API 中转服务。
+- **高级记忆系统**: 独具特色的两层记忆系统。AI 会将关于用户的关键事实智能地总结并存入长期记忆，从而实现真正个性化、有上下文的互动。
+- **运行时配置**: 用户友好的设置窗口允许你随时动态修改 API 密钥、模型、AI 人设等信息。
+- **首次运行向导**: 首次启动程序时会自动弹出引导设置，无需再手动编辑配置文件。
 
-## 🛠️ 技术栈
+## 🚀 快速上手 (普通用户)
 
+使用本项目的最简单方式，是直接下载我们为您打包好的 Windows 最新版本。
+
+**[➡️ 前往 Releases 页面下载最新版本！](https://github.com/your-username/your-repository-name/releases/latest)**
+
+您只需下载 `.exe` 文件，将它放在任意文件夹中，然后双击运行即可。本程序是绿色、免安装的。
+
+> **⚠️ 重要前提：API 地址与密钥**
+>
+> 为了正常运行，本程序需要一个能兼容 OpenAI API 格式、并且能同时调用语言模型（如 Google Gemini）和文本转语音模型（如 OpenAI TTS）的 API 服务地址。
+>
+> 这通常意味着您需要使用一个**第三方代理或中转服务**，由该服务将请求分别发给对应的上游模型。您在设置中填写的 `API_BASE_URL` 和 `API_KEY` 必须是用于该中转服务的。
+>
+> **程序会在首次启动时，引导您填入您的服务地址和密钥。** 请注意，配置此类服务可能较为复杂，因此本项目更适合熟悉此类 API 代理服务的用户。
+>
+> #### 设置项说明
+> 设置窗口会要求您填写以下信息：
+> -   **`API_BASE_URL`**: 你的 API 代理服务的完整 URL 地址。
+> -   **`API_KEY`**: 用于访问你的 API 代理服务的密钥。
+> -   **`USER_NICKNAME`**: 你希望 AI 如何称呼你。*默认值: `你`*
+> -   **`LLM_MODEL`**: 用于对话的语言模型。*默认值: `gemini-2.5-pro`*
+> -   **`TTS_MODEL`**: 用于文本转语音的模型。*默认值: `tts-1`*
+> -   **`TTS_SPEED`**: 语音的播放速度 (范围 `0.25` 到 `4.0`)。*默认值: `1.0`*
+> -   **`AI_PERSONA`**: 关于 AI 性格的详细描述。
+> -   **`MEMORY_TRIGGER_THRESHOLD`**: 对话多少轮后触发记忆总结。*默认值: `20`*
+
+---
+
+## 👨‍💻 面向开发者 (从源码构建)
+
+如果您希望修改代码，或自行构建本项目，请遵循以下步骤。
+
+### 1. 技术栈
 - **后端**: Python 3
 - **语言模型**: Google Gemini Pro (via API)
 - **语音合成**: OpenAI TTS (via API)
-- **依赖库**: `requests`, `pygame`
+- **依赖库**: `requests`, `pygame`, `customtkinter`
 
-## 🚀 安装与运行
-
-**1. 克隆仓库**
+### 2. 环境设置
+**a. 克隆仓库**
 ```bash
 git clone <your-repository-url>
 cd Project-EchoSoul
 ```
 
-**2. 安装依赖**
+**b. 安装依赖**
 ```bash
 pip install -r requirements.txt
 ```
 
-**3. 配置项目**
-
-这是最重要的一步！将模板文件 `config.example.py` 复制一份，并重命名为 `config.py`。
-
+### 3. 从源码运行
+直接运行 `gui.py` 脚本即可。首次运行时，程序会自动弹出设置窗口。
 ```bash
-cp config.example.py config.py
+python gui.py
 ```
 
-然后，打开你新创建的 `config.py` 文件进行修改。
-
-> **⚠️ 重要安全提示:**
-> 我们已经将 `config.py` 加入了 `.gitignore`。请**不要**强制将它上传到 GitHub，以保护你的 API 密钥安全。
-
-你需要修改 `config.py` 中的以下变量：
-
-- `API_BASE_URL`: 你的 API 中转服务地址 (例如: `"https://your.proxy.url/v1"`)。
-- `API_KEY`: 你的 API 密钥。
-- `LLM_MODEL`: 你想使用的语言模型 (例如: `"gemini-2.5-pro"`)。
-- `TTS_MODEL`: 你想使用的语音模型 (例如: `"tts-1"`)。
-- `AI_PERSONA`: 在这里定义你的 AI 的详细人设。
-
-**4. 运行助手**
+### 4. 打包发布
+本项目已配置好，可使用 PyInstaller 轻松打包成一个独立的 `.exe` 可执行文件。
 ```bash
-python main.py
+pyinstaller gui.py --onefile --windowed --name="Project-EchoSoul" --version-file version.txt
 ```
-
-## 💬 使用示例
-
-```
-AI 助手已启动。输入 '退出' 来结束程序。
-你: 你好
-AI: 正在思考...
-AI: 叫本喵有什么事吗，铲屎官喵~
-AI: 正在生成语音...
-```
+最终生成的 `.exe` 文件会位于 `dist` 文件夹内。
 
 ---
 *这个项目是在 Roo 的帮助下创建的。*

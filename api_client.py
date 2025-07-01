@@ -1,27 +1,26 @@
 # api_client.py
 
 import requests
-import config
 
-def get_llm_response(history: list) -> str:
+def get_llm_response(history: list, api_key: str, base_url: str, model: str) -> str:
     """
     根据对话历史调用语言模型 API 获取回复。
     """
     headers = {
-        "Authorization": f"Bearer {config.API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
     
     # 注意：这里的 body 结构需要根据你的 newapi 文档进行调整
     # 这是一个兼容 OpenAI API 格式的示例
     body = {
-        "model": config.LLM_MODEL,
+        "model": model,
         "messages": history
     }
     
     try:
         response = requests.post(
-            f"{config.API_BASE_URL}/chat/completions",
+            f"{base_url}/chat/completions",
             headers=headers,
             json=body
         )
@@ -31,34 +30,30 @@ def get_llm_response(history: list) -> str:
         # 这同样需要根据你的 newapi 的具体返回格式进行调整
         return response.json()["choices"][0]["message"]["content"]
 
-    except requests.exceptions.JSONDecodeError:
-        print("无法解析服务器返回的 JSON 数据。")
-        print(f"状态码: {response.status_code}")
-        print(f"返回内容: {response.text}")
-        return "抱歉，服务器返回格式错误。"
     except requests.exceptions.RequestException as e:
-        print(f"调用 LLM API 时发生网络错误: {e}")
-        return "抱歉，我暂时无法回答。"
+        # 将具体的网络错误或服务器错误重新抛出
+        raise ConnectionError(f"调用 LLM API 失败: {e}") from e
 
-def get_tts_audio(text: str) -> bytes:
+def get_tts_audio(text: str, api_key: str, base_url: str, model: str, speed: float) -> bytes:
     """
     调用 TTS API 获取语音数据。
     """
     headers = {
-        "Authorization": f"Bearer {config.API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
     
     # 注意：这里的 body 结构需要根据你的 newapi 文档进行调整
     body = {
-        "model": config.TTS_MODEL,
+        "model": model,
         "input": text,
-        "voice": "nova"  # 这是一个清晰的女性声音
+        "voice": "nova",  # 这是一个清晰的女性声音
+        "speed": speed
     }
     
     try:
         response = requests.post(
-            f"{config.API_BASE_URL}/audio/speech",
+            f"{base_url}/audio/speech",
             headers=headers,
             json=body
         )
@@ -68,5 +63,74 @@ def get_tts_audio(text: str) -> bytes:
         return response.content
         
     except requests.exceptions.RequestException as e:
-        print(f"调用 TTS API 时发生错误: {e}")
-        return None
+        # 将具体的网络错误或服务器错误重新抛出
+        raise ConnectionError(f"调用 TTS API 失败: {e}") from e
+
+def get_memory_summary(history: list, api_key: str, base_url: str, model: str) -> str:
+    """调用 LLM 对话历史进行总结，提取关键信息。"""
+    
+    summary_prompt = {
+        "role": "system",
+        "content": """
+你是一个顶级的对话摘要分析师。你的任务是从一段对话历史中，像侦探一样找出关于“用户”的、具有**长期价值**的、可作为永久记忆的**核心事实**。
+
+你需要严格遵守以下规则：
+1.  **判断长期价值**：在提取任何信息前，先判断“这条信息在一周后、一个月后，是否依然对理解这个用户有帮助？”。只记录那些有长期价值的信息。
+2.  **提取核心事实**：只关注关于“用户”的**不变或长期属性**。例如：用户的名字、职业、人生目标、关键的个人经历、坚定的好恶（如“非常喜欢古典音乐”、“对猫毛过敏”）等。
+3.  **忽略临时信息**：坚决忽略闲聊、问候、关于天气或当天心情的讨论、一次性的计划（如“我今晚想吃披萨”）以及任何无信息量的对话。
+4.  **简洁输出**：以最简洁的第三人称陈述句输出，每条信息点占一行。
+5.  **无信息则留空**：如果对话中没有出现任何符合上述标准的关键信息，请务必只返回一个空字符串。
+6.  **禁止额外内容**：绝对不要添加任何额外的解释、标题、引言或总结性的话语。
+
+例如，如果输入以下对话：
+[
+  {"role": "user", "content": "你好"},
+  {"role": "assistant", "content": "你好呀！"},
+  {"role": "user", "content": "我叫小王，我有一只叫“旺财”的柯基犬。"},
+  {"role": "assistant", "content": "柯基很可爱！"},
+  {"role": "user", "content": "是啊，不过我不喜欢吃洋葱。"},
+]
+
+你应该输出：
+用户的名字是小王。
+用户有一只叫“旺财”的柯基犬。
+用户不喜欢吃洋葱。
+
+再例如，如果输入以下对话：
+[
+  {"role": "user", "content": "今天天气真好"},
+  {"role": "assistant", "content": "是呀，很适合出去玩。"},
+  {"role": "user", "content": "我最喜欢的游戏是《赛博朋克2077》。"},
+  {"role": "assistant", "content": "哦，那是一款很棒的游戏！"},
+  {"role": "user", "content": "你觉得呢？"},
+  {"role": "assistant", "content": "我只是一个AI，没有个人喜好哦。"},
+]
+
+你应该输出：
+用户最喜欢的游戏是《赛博朋克2077》。
+"""
+    }
+    
+    request_history = [summary_prompt] + history
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    
+    body = {
+        "model": model,
+        "messages": request_history
+    }
+    
+    try:
+        response = requests.post(
+            f"{base_url}/chat/completions",
+            headers=headers,
+            json=body
+        )
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
+    except requests.exceptions.RequestException as e:
+        print(f"调用记忆总结 API 时发生错误: {e}")
+        return "" # 出错时返回空字符串
