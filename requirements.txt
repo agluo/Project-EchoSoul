@@ -1,3 +1,4 @@
 requests
 pygame
 customtkinter
+Pillow

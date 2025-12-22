@@ -1,21 +1,74 @@
 # api_client.py
 
 import requests
+import base64
+import os
 
-def get_llm_response(history: list, api_key: str, base_url: str, model: str) -> str:
+def encode_image_to_base64(image_path: str) -> str:
+    """
+    将图片文件编码为 base64 字符串。
+    """
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+def get_image_mime_type(image_path: str) -> str:
+    """
+    根据文件扩展名获取图片的 MIME 类型。
+    """
+    ext = os.path.splitext(image_path)[1].lower()
+    mime_types = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".gif": "image/gif",
+        ".webp": "image/webp",
+        ".bmp": "image/bmp"
+    }
+    return mime_types.get(ext, "image/jpeg")
+
+def get_llm_response(history: list, api_key: str, base_url: str, model: str, image_path: str | None = None) -> str:
     """
     根据对话历史调用语言模型 API 获取回复。
+    支持可选的图片参数，用于多模态对话。
     """
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
     
+    # 如果有图片，需要修改最后一条用户消息为多模态格式
+    messages_to_send = []
+    for msg in history:
+        messages_to_send.append(msg.copy())
+    
+    # 如果提供了图片路径，将最后一条用户消息转换为多模态格式
+    if image_path and os.path.exists(image_path):
+        # 找到最后一条用户消息并转换为多模态格式
+        for i in range(len(messages_to_send) - 1, -1, -1):
+            if messages_to_send[i]["role"] == "user":
+                text_content = messages_to_send[i]["content"]
+                base64_image = encode_image_to_base64(image_path)
+                mime_type = get_image_mime_type(image_path)
+                
+                messages_to_send[i]["content"] = [
+                    {
+                        "type": "text",
+                        "text": text_content if text_content else "请描述这张图片"
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime_type};base64,{base64_image}"
+                        }
+                    }
+                ]
+                break
+    
     # 注意：这里的 body 结构需要根据你的 newapi 文档进行调整
     # 这是一个兼容 OpenAI API 格式的示例
     body = {
         "model": model,
-        "messages": history
+        "messages": messages_to_send
     }
     
     try:
